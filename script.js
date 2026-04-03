@@ -1,5 +1,4 @@
 const API_KEY = "AIzaSyA9HgU7oZcG2gHT2lD6vL8WHrk_VrUfNVM"; 
-// SỬA URL THÀNH BẢN V1 ỔN ĐỊNH
 const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
