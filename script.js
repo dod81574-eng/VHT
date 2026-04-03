@@ -1,5 +1,6 @@
-const API_KEY = "AIzaSyAO6wRItPlm6LKjGMHUpT4Sj6z-ymL4Oy0"; 
-const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+
+const API_KEY = "AIzaSyCqJEHfAbEBSKYUG0UMDY5zGN0dsGTTDdM"; 
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
     const topic = document.getElementById('topic').value;
@@ -14,14 +15,14 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     }
 
     submitBtn.disabled = true;
-    submitBtn.innerText = "Đang kết nối AI...";
+    submitBtn.innerText = "Hệ thống đang chấm...";
     loading.classList.remove('hidden');
     resultDiv.classList.add('hidden');
 
-    const prompt = `Bạn là giáo viên Văn Việt Nam. Hãy chấm điểm (thang 10) và nhận xét bài văn này. 
+    const prompt = `Bạn là một giáo viên dạy Văn Việt Nam. Hãy chấm điểm (thang 10) và nhận xét bài văn này. 
     Đề bài: ${topic}
     Bài làm: ${essay}
-    Yêu cầu trả về duy nhất định dạng JSON như sau: {"score": "điểm số/10", "feedback": "nhận xét chi tiết"}`;
+    Yêu cầu: Chỉ trả về mã JSON theo cấu trúc: {"score": "điểm số", "feedback": "nhận xét"}`;
 
     try {
         const response = await fetch(`${API_URL}?key=${API_KEY}`, {
@@ -33,15 +34,12 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
         });
 
         const data = await response.json();
-
+        
         if (data.error) {
-            // Nếu v1 vẫn lỗi, thông báo lỗi cụ thể để xử lý
             throw new Error(data.error.message);
         }
 
         const outputText = data.candidates[0].content.parts[0].text;
-        
-        // Làm sạch dữ liệu để tránh lỗi parse JSON
         const cleanJson = outputText.replace(/```json|```/g, "").trim();
         const finalResult = JSON.parse(cleanJson);
 
@@ -50,8 +48,8 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
         resultDiv.classList.remove('hidden');
 
     } catch (error) {
-        console.error("Lỗi:", error);
-        alert("Thông báo lỗi: " + error.message);
+        console.error(error);
+        alert("Lỗi: " + error.message);
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Chấm điểm ngay";
