@@ -1,4 +1,4 @@
-const API_KEY = "YOUR_GEMINI_API_KEY_HERE"; // AIzaSyAp_075PXhXtVSz_ECWeolVS9ixuPJGlm8
+const API_KEY = "AIzaSyAp_075PXhXtVSz_ECWeolVS9ixuPJGlm8"; 
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
@@ -40,10 +40,14 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
             })
         });
 
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
         const data = await response.json();
         const output = data.candidates[0].content.parts[0].text;
         
-        // Trích xuất JSON từ phản hồi của AI
+        // Trích xuất JSON từ phản hồi của AI (xử lý cả trường hợp AI trả về markdown)
         const cleanJson = output.replace(/```json|```/g, "").trim();
         const finalResult = JSON.parse(cleanJson);
 
@@ -54,7 +58,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
 
     } catch (error) {
         console.error("Lỗi:", error);
-        alert("Có lỗi xảy ra khi kết nối với AI. Vui lòng kiểm tra API Key hoặc thử lại.");
+        alert("Có lỗi xảy ra khi kết nối với AI. Vui lòng kiểm tra lại bài viết hoặc thử lại sau vài giây.");
     } finally {
         submitBtn.disabled = false;
         loading.classList.add('hidden');
