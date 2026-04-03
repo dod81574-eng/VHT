@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Chấm bài Văn AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chấm Bài Văn Với Gemini AI</h1>
+        <p>Nhập bài văn của bạn vào bên dưới để nhận điểm và nhận xét chi tiết.</p>
+        
+        <div class="input-group">
+            <label for="topic">Đề bài (tùy chọn):</label>
+            <input type="text" id="topic" placeholder="Ví dụ: Nghị luận về lòng dũng cảm...">
+            
+            <label for="essay">Nội dung bài văn:</label>
+            <textarea id="essay" rows="15" placeholder="Dán bài văn của bạn ở đây..."></textarea>
+        </div>
+
+        <button id="submitBtn">Chấm điểm ngay</button>
+
+        <div id="loading" class="hidden">Đang phân tích bài viết, vui lòng đợi...</div>
+
+        <div id="result" class="hidden">
+            <h2>Kết quả đánh giá</h2>
+            <div id="scoreBox">
+                <span>Điểm số:</span>
+                <strong id="finalScore">0/10</strong>
+            </div>
+            <div id="feedback">
+                <h3>Nhận xét chi tiết:</h3>
+                <div id="feedbackContent"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
