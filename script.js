@@ -1,3 +1,4 @@
+// DÁN API KEY MỚI CỦA BẠN VÀO GIỮA DẤU NGOẶC KÉP DƯỚI ĐÂY
 const API_KEY = "AIzaSyA9HgU7oZcG2gHT2lD6vL8WHrk_VrUfNVM"; 
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
@@ -8,28 +9,28 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     const loading = document.getElementById('loading');
     const resultDiv = document.getElementById('result');
 
-    if (!essay || essay.trim().length < 10) {
-        alert("Vui lòng nhập bài văn đầy đủ hơn để AI có thể chấm điểm!");
+    // Kiểm tra đầu vào cơ bản
+    if (!essay || essay.trim().length < 20) {
+        alert("Vui lòng nhập bài văn đầy đủ (ít nhất 20 ký tự) để AI có thể chấm điểm!");
         return;
     }
 
-    // Hiển thị trạng thái đang xử lý
+    // Hiển thị trạng thái chờ
     submitBtn.disabled = true;
-    submitBtn.innerText = "Đang phân tích...";
+    submitBtn.innerText = "Đang phân tích dữ liệu...";
     loading.classList.remove('hidden');
     resultDiv.classList.add('hidden');
 
-    const prompt = `
-        Bạn là một giáo viên dạy Ngữ Văn Việt Nam. Hãy chấm điểm và nhận xét bài văn sau.
-        Đề bài: ${topic || "Không có đề bài cụ thể"}
-        Nội dung bài văn: ${essay}
-
-        Yêu cầu phản hồi CHỈ bằng định dạng JSON theo cấu trúc sau, không kèm lời dẫn:
-        {
-            "score": "số điểm/10",
-            "feedback": "nhận xét chi tiết về nội dung, diễn đạt và sáng tạo"
-        }
-    `;
+    // Cấu trúc yêu cầu gửi cho Gemini
+    const prompt = `Bạn là một giáo viên dạy Văn. Hãy chấm điểm bài văn sau theo thang điểm 10 và nhận xét chi tiết. 
+    Đề bài: ${topic || "Tự chọn"}
+    Nội dung bài viết: ${essay}
+    
+    Yêu cầu trả về kết quả dưới dạng JSON thuần túy (không kèm markdown):
+    {
+        "score": "số điểm/10",
+        "feedback": "nhận xét cụ thể ưu và nhược điểm"
+    }`;
 
     try {
         const response = await fetch(`${API_URL}?key=${API_KEY}`, {
@@ -41,25 +42,30 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
         });
 
         const data = await response.json();
-        
+
+        // Kiểm tra nếu API trả về lỗi
         if (data.error) {
+            if (data.error.message.includes("expired") || data.error.status === "PERMISSION_DENIED") {
+                throw new Error("API Key cũ hoặc đã hết hạn. Hãy kiểm tra lại file script.js trên GitHub!");
+            }
             throw new Error(data.error.message);
         }
 
-        let output = data.candidates[0].content.parts[0].text;
+        // Xử lý nội dung trả về từ AI
+        let outputText = data.candidates[0].content.parts[0].text;
         
-        // Làm sạch dữ liệu trả về để tránh lỗi JSON parse
-        const cleanJson = output.replace(/```json|```/g, "").trim();
-        const finalResult = JSON.parse(cleanJson);
+        // Loại bỏ các ký tự thừa nếu AI trả về định dạng ```json ... ```
+        const jsonString = outputText.replace(/```json|```/g, "").trim();
+        const finalResult = JSON.parse(jsonString);
 
-        // Đổ dữ liệu ra màn hình
+        // Hiển thị kết quả lên giao diện
         document.getElementById('finalScore').innerText = finalResult.score;
         document.getElementById('feedbackContent').innerText = finalResult.feedback;
         resultDiv.classList.remove('hidden');
 
     } catch (error) {
-        console.error("Lỗi:", error);
-        alert("Có lỗi: " + error.message + ". Hãy kiểm tra lại API Key hoặc nội dung bài viết.");
+        console.error("Lỗi chi tiết:", error);
+        alert("Lỗi: " + error.message);
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Chấm điểm ngay";
