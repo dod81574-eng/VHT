@@ -1,5 +1,5 @@
 const API_KEY = "AIzaSyAO6wRItPlm6LKjGMHUpT4Sj6z-ymL4Oy0"; 
-const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyAO6wRItPlm6LKjGMHUpT4Sj6z-ymL4Oy0";
+const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
     const topic = document.getElementById('topic').value;
