@@ -1,6 +1,6 @@
 // DÁN API KEY MỚI CỦA BẠN VÀO GIỮA DẤU NGOẶC KÉP DƯỚI ĐÂY
 const API_KEY = "AIzaSyA9HgU7oZcG2gHT2lD6vL8WHrk_VrUfNVM"; 
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
     const topic = document.getElementById('topic').value;
