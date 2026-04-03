@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyCqJEHfAbEBSKYUG0UMDY5ZGN0dsGTTDdM"; 
+const API_KEY = "AIzaSyDvw96dIcf_lmtAKOjP8jWbI43ZQNtDdC8"; 
 const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
@@ -39,7 +39,6 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
         }
 
         const outputText = data.candidates[0].content.parts[0].text;
-        // Tách JSON an toàn
         const start = outputText.indexOf('{');
         const end = outputText.lastIndexOf('}') + 1;
         const finalResult = JSON.parse(outputText.substring(start, end));
