@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyDIbee-IyB9kPONMkaELxjjF6-63DFUS58"; // Nhớ kiểm tra xem Key này còn sống không nhé
+const API_KEY = "AIzaSyCm9WeOHVwIygx80XgFFrlLFDfoV4woqVo"; // Nhớ kiểm tra xem Key này còn sống không nhé
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
