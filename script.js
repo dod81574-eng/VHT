@@ -1,5 +1,6 @@
-const API_KEY = "AIzaSyCm9WeOHVwIygx80XgFFrlLFDfoV4woqVo"; // Nhớ kiểm tra xem Key này còn sống không nhé
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const API_KEY = "AIzaSyCwhdnNgYqyiIBL4YrNTmW6SHBVfevd6Bk"; 
+// Cập nhật URL sang model gemini-2.5-flash theo yêu cầu của bạn
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
     const topic = document.getElementById('topic').value;
@@ -8,21 +9,23 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     const loading = document.getElementById('loading');
     const resultDiv = document.getElementById('result');
 
-    if (!essay || essay.trim().length < 5) {
-        alert("Vui lòng nhập bài văn!");
+    // Kiểm tra đầu vào cơ bản
+    if (!essay || essay.trim().length < 10) {
+        alert("Nội dung bài văn quá ngắn để chấm điểm!");
         return;
     }
 
+    // Hiệu ứng giao diện khi đang xử lý
     submitBtn.disabled = true;
-    submitBtn.innerText = "Hệ thống đang chấm...";
-    loading.classList.remove('hidden');
-    resultDiv.classList.add('hidden');
+    submitBtn.innerText = "Hệ thống 2.5 đang chấm...";
+    if(loading) loading.classList.remove('hidden');
+    if(resultDiv) resultDiv.classList.add('hidden');
 
-    // Cấu trúc prompt để ép AI trả về JSON sạch
-    const prompt = `Bạn là giáo viên Văn. Chấm điểm bài văn sau. 
-    Đề: ${topic}
-    Bài: ${essay}
-    Trả về định dạng JSON duy nhất: {"score": "điểm/10", "feedback": "nhận xét"}`;
+    // Prompt tối ưu để AI trả về JSON sạch sẽ
+    const prompt = `Bạn là một chuyên gia khảo thí Ngữ văn. Hãy chấm điểm bài văn sau.
+    Đề bài: ${topic}
+    Bài làm: ${essay}
+    Yêu cầu: Trả về duy nhất 1 đối tượng JSON với cấu trúc: {"score": "điểm/10", "feedback": "nhận xét chi tiết"}`;
 
     try {
         const response = await fetch(`${API_URL}?key=${API_KEY}`, {
@@ -31,7 +34,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
-                    // Thêm dòng này để AI hiểu là phải xuất ra JSON chuẩn
+                    // Ép kiểu đầu ra là JSON để tránh AI trả về văn bản thừa
                     response_mime_type: "application/json"
                 }
             })
@@ -39,24 +42,30 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
 
         const data = await response.json();
 
+        // Kiểm tra lỗi từ phía Google API
         if (data.error) {
-            // Nếu vẫn lỗi, hiện thông báo chi tiết để debug
-            throw new Error(data.error.message);
+            throw new Error(`Lỗi từ Google: ${data.error.message}`);
         }
 
+        // Trích xuất văn bản JSON từ kết quả của model 2.5
         const outputText = data.candidates[0].content.parts[0].text;
+        
+        // Chuyển chuỗi văn bản thành Object để hiển thị
         const finalResult = JSON.parse(outputText);
 
+        // Đổ dữ liệu ra giao diện HTML
         document.getElementById('finalScore').innerText = finalResult.score;
         document.getElementById('feedbackContent').innerText = finalResult.feedback;
-        resultDiv.classList.remove('hidden');
+        
+        if(resultDiv) resultDiv.classList.remove('hidden');
 
     } catch (error) {
-        console.error(error);
-        alert("Lỗi: " + error.message);
+        console.error("Chi tiết lỗi:", error);
+        alert("Không thể kết nối với Model 2.5: " + error.message);
     } finally {
+        // Khôi phục trạng thái nút bấm
         submitBtn.disabled = false;
         submitBtn.innerText = "Chấm điểm ngay";
-        loading.classList.add('hidden');
+        if(loading) loading.classList.add('hidden');
     }
 });
